@@ -190,8 +190,11 @@ WHERE account_id = 396;
 #Continuing with the previous example, rank the top 10 account_ids based on their difference.
 SELECT
 	account_id as ids,
-    sum(CASE WHEN `type` = 'PRIJEM' THEN amount ELSE -amount END) as difference
+    floor(sum(CASE 
+		WHEN `type` = 'PRIJEM' THEN amount 
+        WHEN `type` = 'VYDAJ' THEN -amount
+        END)) as difference
 FROM trans
 GROUP BY account_id
 ORDER BY difference DESC
-LIMIT 10
+LIMIT 10;
