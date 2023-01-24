@@ -81,12 +81,14 @@ WHERE film_id <= 0 or film_id = null;
 
 
 #10. Get the addresses that have NO customers, and ends with the letter "e"
-SELECT a.address, count(b.customer_id)
+SELECT 
+	a.address,
+    sum(CASE WHEN b.customer_id is null then 1 else 0 end) as customers
 FROM address as a
 JOIN customer as b
 WHERE right(a.address, 1) = 'e'
 GROUP BY a.address
-ORDER BY count(b.customer_id);
+ORDER BY sum(CASE WHEN b.customer_id is null then 1 else 0 end) DESC;
 
 
 #Optional: what is the most rented film?
