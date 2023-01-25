@@ -85,10 +85,15 @@ SELECT
 	a.address,
     sum(CASE WHEN b.customer_id is null then 1 else 0 end) as customers
 FROM address as a
-JOIN customer as b
+JOIN customer as b using (address_id)
 WHERE right(a.address, 1) = 'e'
 GROUP BY a.address
 ORDER BY sum(CASE WHEN b.customer_id is null then 1 else 0 end) DESC;
+
+SELECT address FROM address
+LEFT JOIN customer using (address_id)
+WHERE customer_id is null and right(address, 1) = 'e';
+
 
 
 #Optional: what is the most rented film?
