@@ -85,14 +85,28 @@ WHERE film_id in (SELECT film_id FROM inventory
 #(this refers to the average of all amount spent per each customer).
 
 SELECT round(avg(spent),1) FROM 
-					(SELECT sum(amount) as spent FROM payment
-					 GROUP BY customer_id) as a;  #average payments = 112.5
+					 (SELECT sum(amount) as spent FROM payment
+					  GROUP BY customer_id) as a;  #average of total payments = 112.5
                      
 
-WITH spent_amounts as (SELECT customer_id, sum(amount) as spent FROM payment
-					   GROUP BY customer_id
-					   HAVING sum(amount) > 112.5)
+WITH spent_amount as (SELECT customer_id, sum(amount) as spent FROM payment
+					  GROUP BY customer_id
+					  HAVING sum(amount) > 112.5)
                        
 SELECT first_name, last_name FROM customer
-WHERE customer_id in (SELECT customer_id FROM spent_amounts)
+WHERE customer_id in (SELECT customer_id FROM spent_amount)
+ORDER BY first_name;
+
+
+#8. all in one
+                     
+WITH spent_amount as (SELECT customer_id, sum(amount) as spent FROM payment
+					  GROUP BY customer_id
+					  HAVING sum(amount) > 
+										  (SELECT round(avg(spent),1) FROM
+                                          (SELECT sum(amount) as spent FROM payment
+                                           GROUP BY customer_id) as a))
+                       
+SELECT first_name, last_name FROM customer
+WHERE customer_id in (SELECT customer_id FROM spent_amount)
 ORDER BY first_name;
